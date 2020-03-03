@@ -19,6 +19,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var firstMenuItem: NSMenuItem?
     @IBOutlet weak var secondMenuItem: NSMenuItem?
     
+    let global:Bool = false
+    let regions = ["China","Taiwan","Hong Kong","Macau"]
+    let refreshEvery:Int = 60
+    
     var statusItem: NSStatusItem?
     var customView: CustomView?
     
@@ -52,7 +56,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { timer in
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(self.refreshEvery), repeats: true) { timer in
             print("auto refresh")
             self.updateNumbers ()
         }
@@ -98,7 +102,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 let csv: CSV = try CSV(string: dataString)
                 lastDay = csv.header.last!
                 for line in csv.namedRows {
-                    if  ["China","Taiwan","Hong Kong","Macau"].contains(where: line["Country/Region"]!.contains)
+                    if self.global {
+                        r! += Int(line[lastDay!]!)!
+                    }
+                    else if  self.regions.contains(where: line["Country/Region"]!.contains)
                     {
                         r! += Int(line[lastDay!]!)!
                     }
