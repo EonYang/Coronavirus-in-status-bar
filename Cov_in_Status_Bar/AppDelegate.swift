@@ -8,6 +8,8 @@
 
 import Cocoa
 import SwiftCSV
+//import Foundation
+import SwiftDate
 //import WebKit
 
 @NSApplicationMain
@@ -15,18 +17,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @IBOutlet weak var menu: NSMenu?
     @IBOutlet weak var firstMenuItem: NSMenuItem?
+    @IBOutlet weak var secondMenuItem: NSMenuItem?
     
     var statusItem: NSStatusItem?
     var customView: CustomView?
     
     var dataString:String = ""
+    var lastDay:String = ""
     
     let urlConfirmed = URL(string: "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv")
     
     let urlDead = URL(string: "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv")
     
     let urlRecovered = URL(string: "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv")
- 
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         
@@ -48,7 +52,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { timer in
+        Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { timer in
             print("auto refresh")
             self.updateNumbers ()
         }
@@ -56,17 +60,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @objc func updateNumbers () {
-        getSum(url: urlConfirmed!, completionHandeler: { result in
+        
+        getSum(url: urlConfirmed!, completionHandeler: { result, date in
+            self.secondMenuItem?.title = "updating..."
             let rString: String? = String(result!)
             print(rString!)
             self.customView?.labelConfirmed.stringValue = rString!
+            self.setLastUpdateDate(date, self.secondMenuItem)
         })
-        getSum(url: urlDead!, completionHandeler: { result in
+        getSum(url: urlDead!, completionHandeler: { result, date in
             let rString: String? = String(result!)
             print(rString!)
             self.customView?.labelDead.stringValue = rString!
         })
-        getSum(url: urlRecovered!, completionHandeler: { result in
+        getSum(url: urlRecovered!, completionHandeler: { result , date in
             let rString: String? = String(result!)
             print(rString!)
             self.customView?.labelRecovered.stringValue = rString!
@@ -75,22 +82,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationWillTerminate(_ aNotification: Notification) {}
     
-    func getSum(url:URL, completionHandeler: @escaping (_ sum: Int?) -> Void ){
+    func setLastUpdateDate(_ lastDay:String!,_ menuItem: NSMenuItem!) {
+        let now = Date()
+        menuItem.title = "Till " + lastDay + ", updated " + now.toRelative(style: RelativeFormatter.defaultStyle(), locale: Locales.english)
+    }
+    
+    func getSum(url:URL, completionHandeler: @escaping (_ sum: Int?, _ lastDay: String?) -> Void ){
         var r: Int? = 0
+        var lastDay: String?
         let task = URLSession.shared.dataTask(with: url) {(data, response, error) in
             guard let data = data else { return }
             let dataString = String(data: data, encoding: .utf8)!
             
             do {
                 let csv: CSV = try CSV(string: dataString)
-                let lastDay = csv.header.last
-                print(lastDay!)
+                lastDay = csv.header.last!
                 for line in csv.namedRows {
-                    if line["Country/Region"]!.contains("China"){
+                    if  ["China","Taiwan","Hong Kong","Macau"].contains(where: line["Country/Region"]!.contains)
+                    {
                         r! += Int(line[lastDay!]!)!
                     }
                 }
-                completionHandeler(r!)
+                completionHandeler(r!, lastDay!)
                 
             } catch let parseError as CSVParseError {
                 print(parseError)
@@ -105,6 +118,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 extension AppDelegate: NSMenuDelegate {
     func menuWillOpen(_ menu: NSMenu) {
         self.updateNumbers()
+        
     }
     func menuDidClose(_ menu: NSMenu) {}
     

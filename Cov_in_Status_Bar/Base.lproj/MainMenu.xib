@@ -10,11 +10,12 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Cov_in_Status_Bar" customModuleProvider="target">
             <connections>
                 <outlet property="firstMenuItem" destination="h02-cg-5KS" id="bOd-2k-Mn3"/>
                 <outlet property="menu" destination="uQy-DD-JDr" id="bWA-dX-fXp"/>
+                <outlet property="secondMenuItem" destination="vkS-87-r3K" id="OEl-A3-W0x"/>
             </connections>
         </customObject>
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
@@ -28,6 +29,10 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="EXh-RO-TVp"/>
+                            <menuItem title="Item" id="vkS-87-r3K">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="6pg-Fl-QXb"/>
                             <menuItem title="About Cov_in_Status_Bar" id="5kV-Vb-QxS">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
