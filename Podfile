@@ -7,7 +7,8 @@ target 'Cov_in_Status_Bar' do
 
   # Pods for Cov_in_Status_Bar
 
-  pod "SwiftCSV"
+  pod 'SwiftCSV', '~> 0.5'
+  pod 'SwiftDate', '~> 5.0'
 
 
 end
