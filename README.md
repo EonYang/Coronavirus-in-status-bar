@@ -17,7 +17,7 @@ Set `global` to `true` if you care about the world.
 
 Set `global` to `false` and put countries that you care about in `regions`. 
 
-Check the country names from [this repo](https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv), from which is where I fetch datas.
+Check the country names from [this repo](https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv), from where I fetch data.
 
 ## Denpendencies
 
